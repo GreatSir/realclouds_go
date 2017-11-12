@@ -5,10 +5,10 @@ import (
 	"log"
 	"sync"
 
-	"ayerdudu.com/utils"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql" //Gorm 支持
 	"github.com/labstack/echo"
+	"github.com/shibingli/realclouds_go/utils"
 )
 
 //MySQLConf MySQL config
