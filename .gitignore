@@ -1,14 +1,29 @@
-# Binaries for programs and plugins
-*.exe
 *.dll
-*.so
 *.dylib
-
-# Test binary, build with `go test -c`
-*.test
-
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
-
-# Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
+*.o
+*.a
+*.so
+_obj
+_test
+*.cgo1.go
+*.cgo2.c
+_cgo_defun.c
+_cgo_gotypes.go
+_cgo_export.*
+_testmain.go
+*.exe
+*.test
+*.prof
+*.log
+*.out
+.DS_Store
+.DS_Store?
+.Trashes
+.svn
+*.pid
+*.bak
+bin/*
+bin/apibox
+vendor/
+.vscode/tasks.json
