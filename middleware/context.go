@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"strings"
 
-	"ayerdudu.com/utils"
 	session "github.com/ipfans/echo-session"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
+	"github.com/shibingli/realclouds_go/utils"
 )
 
 //MwContext Context middleware
