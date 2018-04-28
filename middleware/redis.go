@@ -82,7 +82,7 @@ func (r *Redis) Setex(key string, exp int, value interface{}) (err error) {
 	return
 }
 
-//FlushDB *
+//FlushDB **
 func (r *Redis) FlushDB() (err error) {
 	conn := r.RedisPool.Get()
 	defer conn.Close()
