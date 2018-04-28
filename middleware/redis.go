@@ -11,6 +11,7 @@ import (
 	"github.com/shibingli/realclouds_go/utils"
 )
 
+//DefaultRedis *
 func DefaultRedis() (*Redis, error) {
 
 	host := utils.GetENV("REDIS_HOST")
@@ -50,12 +51,13 @@ func DefaultRedis() (*Redis, error) {
 	return redis, nil
 }
 
+//Redis *
 type Redis struct {
 	RedisPool *redis.Pool
 	Mutex     sync.RWMutex
 }
 
-//MwMySQL MySQL middleware
+//MwRedis Redis middleware
 func (r *Redis) MwRedis(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		r.Mutex.Lock()
@@ -65,6 +67,7 @@ func (r *Redis) MwRedis(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
+//Setex *
 func (r *Redis) Setex(key string, exp int, value interface{}) (err error) {
 	key = strings.TrimSpace(key)
 	conn := r.RedisPool.Get()
@@ -79,6 +82,35 @@ func (r *Redis) Setex(key string, exp int, value interface{}) (err error) {
 	return
 }
 
+//FlushDB *
+func (r *Redis) FlushDB() (err error) {
+	conn := r.RedisPool.Get()
+	defer conn.Close()
+	if err = conn.Err(); err != nil {
+		return
+	}
+	_, err = conn.Do("FLUSHDB")
+	if nil != err {
+		return
+	}
+	return
+}
+
+//FlushAll *
+func (r *Redis) FlushAll() (err error) {
+	conn := r.RedisPool.Get()
+	defer conn.Close()
+	if err = conn.Err(); err != nil {
+		return
+	}
+	_, err = conn.Do("FLUSHALL")
+	if nil != err {
+		return
+	}
+	return
+}
+
+//Del *
 func (r *Redis) Del(key string) (err error) {
 	key = strings.TrimSpace(key)
 	conn := r.RedisPool.Get()
@@ -93,6 +125,7 @@ func (r *Redis) Del(key string) (err error) {
 	return
 }
 
+//Get *
 func (r *Redis) Get(key string) (data interface{}, err error) {
 	key = strings.TrimSpace(key)
 	conn := r.RedisPool.Get()
@@ -107,10 +140,12 @@ func (r *Redis) Get(key string) (data interface{}, err error) {
 	return
 }
 
+//GetString *
 func (r *Redis) GetString(key string) (string, error) {
 	return redis.String(r.Get(key))
 }
 
+//GetInterface *
 func (r *Redis) GetInterface(key string, inf interface{}) (str string, err error) {
 	str, err = redis.String(r.Get(key))
 	if nil != err {
@@ -120,54 +155,67 @@ func (r *Redis) GetInterface(key string, inf interface{}) (str string, err error
 	return
 }
 
+//GetStrings *
 func (r *Redis) GetStrings(key string) ([]string, error) {
 	return redis.Strings(r.Get(key))
 }
 
+//GetStringMap *
 func (r *Redis) GetStringMap(key string) (map[string]string, error) {
 	return redis.StringMap(r.Get(key))
 }
 
+//GetInt *
 func (r *Redis) GetInt(key string) (int, error) {
 	return redis.Int(r.Get(key))
 }
 
+//GetInts *
 func (r *Redis) GetInts(key string) ([]int, error) {
 	return redis.Ints(r.Get(key))
 }
 
+//GetIntMap *
 func (r *Redis) GetIntMap(key string) (map[string]int, error) {
 	return redis.IntMap(r.Get(key))
 }
 
+//GetInt64 *
 func (r *Redis) GetInt64(key string) (int64, error) {
 	return redis.Int64(r.Get(key))
 }
 
+//GetInt64Map *
 func (r *Redis) GetInt64Map(key string) (map[string]int64, error) {
 	return redis.Int64Map(r.Get(key))
 }
 
+//GetUint64 *
 func (r *Redis) GetUint64(key string) (uint64, error) {
 	return redis.Uint64(r.Get(key))
 }
 
+//GetFloat64 *
 func (r *Redis) GetFloat64(key string) (float64, error) {
 	return redis.Float64(r.Get(key))
 }
 
+//GetBytes *
 func (r *Redis) GetBytes(key string) ([]byte, error) {
 	return redis.Bytes(r.Get(key))
 }
 
+//GetByteSlices *
 func (r *Redis) GetByteSlices(key string) ([][]byte, error) {
 	return redis.ByteSlices(r.Get(key))
 }
 
+//GetBool *
 func (r *Redis) GetBool(key string) (bool, error) {
 	return redis.Bool(r.Get(key))
 }
 
+//NewRedis *
 func NewRedis(host, password string, maxIdle, idleTimeout int, db string) (rPool *redis.Pool, err error) {
 
 	host = strings.TrimSpace(host)
