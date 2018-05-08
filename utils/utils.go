@@ -30,8 +30,8 @@ import (
 	gounicode "unicode"
 	"unicode/utf8"
 
+	pinyin "github.com/mozillazg/go-pinyin"
 	"github.com/pborman/uuid"
-	pinyin "github.com/shibingli/go-pinyin"
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/japanese"
 	"golang.org/x/text/encoding/korean"
