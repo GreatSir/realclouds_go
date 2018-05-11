@@ -61,8 +61,12 @@ func (h *HTTPLib) Do(method, path string, body io.Reader) ([]byte, error) {
 		return nil, err
 	}
 
-	req.Header.Set("User-Agent", "AyerDudu http client v1.0")
-	req.Header.Set("Auth", "Eric Shi / shibingli@yeah.net")
+	req.Header.Set("User-Agent", "AyerDudu http-client v1.0")
+	req.Header.Set("Auth", "Eric Shi/shibingli@yeah.net")
+
+	if "post" == strings.ToLower(method) {
+		req.Header.Set("Content-type", "application/x-www-form-urlencoded;charset=utf-8")
+	}
 
 	resp, err := h.Client.Do(req)
 	if nil != err {
