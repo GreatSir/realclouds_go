@@ -1,0 +1,74 @@
+package: .
+homepage: https://www.ayerdudu.com
+license: MIT
+owners:
+- name: Eric Shi
+  email: blshi@ayerdudu.com
+  homepage: http://realclouds.io
+ignore:
+- ayerdudu.com
+import:
+- package: golang.org/x/crypto
+- package: golang.org/x/net
+- package: golang.org/x/text
+- package: golang.org/x/tools
+- package: golang.org/x/sys
+- package: github.com/labstack/echo
+  version: ~3.2.1
+- package: github.com/labstack/echo-contrib
+- package: github.com/gorilla/sessions
+  version: ~v1.1
+- package: github.com/dgrijalva/jwt-go
+  version: ~v3.0.0
+- package: github.com/gorilla/context
+  version: ~1.1.0
+- package: github.com/jinzhu/gorm
+  version: ~1.0.0
+- package: github.com/pborman/uuid
+  version: ~1.1.0
+- package: github.com/go-sql-driver/mysql
+  version: ~1.3.0
+- package: github.com/gorilla/websocket
+  version: ~1.2.0
+- package: golang.org/x/oauth2
+- package: github.com/ipfans/echo-session
+  version: ~3.1.1
+- package: github.com/garyburd/redigo
+  version: ~1.1.0
+  subpackages:
+  - redis
+- package: github.com/antonlindstrom/pgstore
+  version: ~1.0.0
+- package: github.com/qiniu/api.v7
+  version: ~7.2.3
+- package: github.com/axgle/mahonia
+- package: github.com/boj/redistore
+  version: ~1.2.0
+- package: github.com/gorilla/securecookie
+  version: ~1.1.0
+- package: github.com/labstack/gommon
+  version: ~0.2.3
+- package: github.com/lib/pq
+- package: github.com/qiniu/x
+  version: ~7.0.8
+  subpackages:
+  - bytes.v7
+  - rpc.v7
+- package: github.com/jinzhu/inflection
+- package: github.com/mattn/go-colorable
+  version: ~0.0.9
+- package: github.com/mattn/go-isatty
+  version: ~0.0.3
+- package: github.com/pkg/errors
+  version: ~0.8.0
+- package: github.com/valyala/fasttemplate
+- package: github.com/yanyiwu/gojieba
+  version: ~1.0.0
+- package: qiniupkg.com/x
+  version: ~7.0.8
+  subpackages:
+  - bytes.v7
+- package: github.com/valyala/bytebufferpool
+- package: github.com/imkira/go-libav
+- package: github.com/mozillazg/go-pinyin
+  version: ~0.13.0
