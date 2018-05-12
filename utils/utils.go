@@ -611,15 +611,25 @@ func ArrayToStringMap(values ...string) map[string]string {
 func StringArrayToURLValues(values ...string) (urlValues url.Values) {
 	for i := 0; i < len(values); i = i + 2 {
 		k, v := values[i], values[i+1]
-		urlValues.Add(k, v)
+		urlValues.Set(k, v)
 	}
 	return
 }
 
-func MergeURLValues(maps ...map[string]string) (urlValues url.Values) {
+func MergeStringMap(maps ...map[string]string) map[string]string {
+	mapVal := make(map[string]string)
 	for _, val := range maps {
 		for k, v := range val {
-			urlValues.Add(k, v)
+			mapVal[k] = v
+		}
+	}
+	return mapVal
+}
+
+func MergeURLValues(values ...url.Values) (urlValues url.Values) {
+	for _, value := range values {
+		for k := range value {
+			urlValues.Set(k, value.Get(k))
 		}
 	}
 	return
