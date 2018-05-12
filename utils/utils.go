@@ -608,6 +608,23 @@ func ArrayToStringMap(values ...string) map[string]string {
 	return mapVal
 }
 
+func StringArrayToURLValues(values ...string) (urlValues url.Values) {
+	for i := 0; i < len(values); i = i + 2 {
+		k, v := values[i], values[i+1]
+		urlValues.Add(k, v)
+	}
+	return
+}
+
+func MergeURLValues(maps ...map[string]string) (urlValues url.Values) {
+	for _, val := range maps {
+		for k, v := range val {
+			urlValues.Add(k, v)
+		}
+	}
+	return
+}
+
 func MergeStringMap(maps ...map[string]string) map[string]string {
 	mapVal := make(map[string]string)
 	for _, val := range maps {
@@ -616,6 +633,28 @@ func MergeStringMap(maps ...map[string]string) map[string]string {
 		}
 	}
 	return mapVal
+}
+
+func StringMapToURIQuery(uri string, queryMap map[string]string) string {
+
+	uri = strings.TrimSpace(uri)
+	uri = strings.Trim(uri, "/")
+
+	var buf bytes.Buffer
+
+	buf.WriteString(uri)
+
+	if strings.Contains(uri, "?") {
+		buf.WriteByte('&')
+	} else {
+		buf.WriteByte('?')
+	}
+
+	for k, v := range queryMap {
+		buf.WriteString(k + "=" + v)
+	}
+
+	return buf.String()
 }
 
 func ToStr(value interface{}) (s string) {
