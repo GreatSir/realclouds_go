@@ -599,6 +599,25 @@ func (s StringUtils) GenerateRandStr32() string {
 	return base64.URLEncoding.EncodeToString(b)
 }
 
+func ArrayToStringMap(values ...string) map[string]string {
+	mapVal := make(map[string]string)
+	for i := 0; i < len(values); i = i + 2 {
+		k, v := values[i], values[i+1]
+		mapVal[k] = v
+	}
+	return mapVal
+}
+
+func MergeStringMap(maps ...map[string]string) map[string]string {
+	mapVal := make(map[string]string)
+	for _, val := range maps {
+		for k, v := range val {
+			mapVal[k] = v
+		}
+	}
+	return mapVal
+}
+
 func ToStr(value interface{}) (s string) {
 	switch v := value.(type) {
 	case bool:
