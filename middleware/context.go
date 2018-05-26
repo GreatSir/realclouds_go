@@ -137,6 +137,12 @@ func (c *Context) DrityWord() *DrityWord {
 	return c.Get("drityword").(*DrityWord)
 }
 
+//UpdateDrityWord 更新 Drity word
+func (c *Context) UpdateDrityWord(drityWordMap *map[string]string) error {
+	c.DrityWord().DrityWordMap = drityWordMap
+	return c.DrityWord().WriteDrityWord()
+}
+
 //NewCtx 获取 WebContext
 func NewCtx(c echo.Context) *Context {
 	return c.(*Context)

@@ -31,32 +31,34 @@ func (d *DrityWord) MwDrityWord(next echo.HandlerFunc) echo.HandlerFunc {
 }
 
 //NewDrityWord *
-func NewDrityWord(drityWordMap *map[string]string, userDictPath ...string) (*DrityWord, error) {
+func NewDrityWord(drityWordMap *map[string]string, userDictPath ...string) (drityWord *DrityWord, err error) {
 	userDict := USER_DICT_PATH
 
 	if len(userDictPath) > 0 {
 		userDict = strings.TrimSpace(userDictPath[0])
 	}
 
-	if err := writeDrityWord(userDict, drityWordMap); nil != err {
-		return nil, err
-	}
-
-	return &DrityWord{
+	drityWord = &DrityWord{
 		UserDictPath: strings.TrimSpace(userDict),
 		DrityWordMap: drityWordMap,
-	}, nil
+	}
+
+	if err = drityWord.WriteDrityWord(); nil != err {
+		return
+	}
+
+	return
 }
 
-//writeDrityWord *
-func writeDrityWord(userDictPath string, drityWordMap *map[string]string) error {
-	f, err := os.OpenFile(userDictPath, os.O_CREATE|os.O_RDWR, os.ModePerm)
+//WriteDrityWord *
+func (d *DrityWord) WriteDrityWord() error {
+	f, err := os.OpenFile(d.UserDictPath, os.O_CREATE|os.O_RDWR, os.ModePerm)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
-	for _, drityWord := range *drityWordMap {
+	for _, drityWord := range *d.DrityWordMap {
 		if len(drityWord) > 0 {
 			_, err := f.WriteString(drityWord + "\n")
 			if nil != err {
@@ -64,6 +66,5 @@ func writeDrityWord(userDictPath string, drityWordMap *map[string]string) error 
 			}
 		}
 	}
-
 	return nil
 }
