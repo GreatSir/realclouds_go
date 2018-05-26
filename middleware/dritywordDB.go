@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	"github.com/shibingli/realclouds_go/models"
 )
 
 //DrityWordDB *
@@ -57,7 +56,7 @@ func UpdateDrityWord(db *gorm.DB, data *DrityWordDB) (err error) {
 
 //FindDrityWords *
 func FindDrityWords(db *gorm.DB, args ...string) (count int, data []DrityWordDB) {
-	argMap := models.ParamsToMaps(args)
+	argMap := paramsToMaps(args)
 
 	ids, _ := argMap["ids"]
 	md5s, _ := argMap["md5s"]
@@ -89,4 +88,18 @@ func DeleteDrityWordByID(db *gorm.DB, id string) (err error) {
 		ID: strings.TrimSpace(id),
 	}).Delete(&DrityWordDB{}).Error
 	return
+}
+
+//paramsToMaps *
+func paramsToMaps(args []string) map[string]string {
+
+	params := make(map[string]string)
+
+	for i := 0; i < len(args); i = i + 2 {
+		key := args[i]
+		val := args[i+1]
+		params[key] = val
+	}
+
+	return params
 }
