@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/pborman/uuid"
 )
 
 //DrityWordDB *
@@ -26,6 +27,15 @@ type DrityWordDB struct {
 //TableName *
 func (DrityWordDB) TableName() string {
 	return "sys_drityword"
+}
+
+//BeforeCreate ID处理
+func (d *DrityWordDB) BeforeCreate(scope *gorm.Scope) error {
+	uuidStr := uuid.NewRandom().String()
+	if err := scope.SetColumn("ID", uuidStr); nil != err {
+		return err
+	}
+	return nil
 }
 
 //AddDrityWord *
