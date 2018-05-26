@@ -30,7 +30,7 @@ func (DrityWordDB) TableName() string {
 
 //AddDrityWord *
 func AddDrityWord(db *gorm.DB, data *DrityWordDB) (err error) {
-	return db.Create(data).Error
+	return db.Create(&data).Error
 }
 
 //FindDrityWordByID *
