@@ -8,8 +8,8 @@ import (
 	"github.com/shibingli/realclouds_go/models"
 )
 
-//DrityWord *
-type DrityWord struct {
+//DrityWordDB *
+type DrityWordDB struct {
 	ID                        string     `sql:"index" gorm:"primary_key;column:id;type:varchar(100)" json:"id,omitempty" xml:"id,omitempty"`
 	Name                      string     `sql:"index" gorm:"column:name;type:varchar(100)" json:"name,omitempty" xml:"name,omitempty"`
 	Description               string     `gorm:"column:description;type:text" json:"description,omitempty" xml:"description,omitempty"`
@@ -25,38 +25,38 @@ type DrityWord struct {
 }
 
 //TableName *
-func (DrityWord) TableName() string {
-	return "sys_drityword"
+func (DrityWordDB) TableName() string {
+	return "sys_dritywordDB"
 }
 
 //AddDrityWord *
-func AddDrityWord(db *gorm.DB, data *DrityWord) (err error) {
+func AddDrityWord(db *gorm.DB, data *DrityWordDB) (err error) {
 	return db.Create(data).Error
 }
 
 //FindDrityWordByID *
-func FindDrityWordByID(db *gorm.DB, id string) (data DrityWord, boo bool) {
-	boo = db.Where(&DrityWord{
+func FindDrityWordByID(db *gorm.DB, id string) (data DrityWordDB, boo bool) {
+	boo = db.Where(&DrityWordDB{
 		ID: strings.TrimSpace(id),
 	}).First(&data).RecordNotFound()
 	return
 }
 
 //FindDrityWordByMD5 *
-func FindDrityWordByMD5(db *gorm.DB, md5 string) (data DrityWord, boo bool) {
-	boo = db.Where(&DrityWord{
+func FindDrityWordByMD5(db *gorm.DB, md5 string) (data DrityWordDB, boo bool) {
+	boo = db.Where(&DrityWordDB{
 		MD5: strings.TrimSpace(md5),
 	}).First(&data).RecordNotFound()
 	return
 }
 
 //UpdateDrityWord *
-func UpdateDrityWord(db *gorm.DB, data *DrityWord) (err error) {
-	return db.Model(&DrityWord{}).Update(&data).Error
+func UpdateDrityWord(db *gorm.DB, data *DrityWordDB) (err error) {
+	return db.Model(&DrityWordDB{}).Update(&data).Error
 }
 
 //FindDrityWords *
-func FindDrityWords(db *gorm.DB, args ...string) (count int, data []DrityWord) {
+func FindDrityWords(db *gorm.DB, args ...string) (count int, data []DrityWordDB) {
 	argMap := models.ParamsToMaps(args)
 
 	ids, _ := argMap["ids"]
@@ -78,15 +78,15 @@ func FindDrityWords(db *gorm.DB, args ...string) (count int, data []DrityWord) {
 		}
 	}
 
-	db.Model(&DrityWord{}).Count(&count).Find(&data)
+	db.Model(&DrityWordDB{}).Count(&count).Find(&data)
 
 	return
 }
 
 // DeleteDrityWordByID *
 func DeleteDrityWordByID(db *gorm.DB, id string) (err error) {
-	err = db.Where(&DrityWord{
+	err = db.Where(&DrityWordDB{
 		ID: strings.TrimSpace(id),
-	}).Delete(&DrityWord{}).Error
+	}).Delete(&DrityWordDB{}).Error
 	return
 }

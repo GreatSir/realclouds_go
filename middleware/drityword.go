@@ -14,16 +14,15 @@ const (
 	USER_DICT_PATH = "/tmp/userdict.txt"
 )
 
-//Drityword *
-type Drityword struct {
+//DrityWord *
+type DrityWord struct {
 	UserDictPath string
 	DrityWordMap *map[string]string
-	Gorm         *gorm.DB
 	Mutex        sync.RWMutex
 }
 
 //MwDrityWord Drity word middleware
-func (d *Drityword) MwDrityWord(next echo.HandlerFunc) echo.HandlerFunc {
+func (d *DrityWord) MwDrityWord(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		c.Set("drityword", d)
 		return next(c)
@@ -31,21 +30,20 @@ func (d *Drityword) MwDrityWord(next echo.HandlerFunc) echo.HandlerFunc {
 }
 
 //NewDrityWord *
-func NewDrityWord(db *gorm.DB, userDictPath ...string) (drityWord *Drityword, err error) {
+func NewDrityWord(db *gorm.DB, userDictPath ...string) (drityWord *DrityWord, err error) {
 	userDict := USER_DICT_PATH
 
 	if len(userDictPath) > 0 {
 		userDict = strings.TrimSpace(userDictPath[0])
 	}
 
-	err = db.AutoMigrate(&DrityWord{}).Error
+	err = db.AutoMigrate(&DrityWordDB{}).Error
 	if nil != err {
 		return nil, err
 	}
 
-	dw := &Drityword{
+	dw := &DrityWord{
 		UserDictPath: strings.TrimSpace(userDict),
-		Gorm:         db,
 	}
 
 	_, drityWords := FindDrityWords(db)
@@ -66,7 +64,7 @@ func NewDrityWord(db *gorm.DB, userDictPath ...string) (drityWord *Drityword, er
 }
 
 //WriteDrityWord *
-func (d *Drityword) WriteDrityWord() error {
+func (d *DrityWord) WriteDrityWord() error {
 	f, err := os.OpenFile(d.UserDictPath, os.O_CREATE|os.O_RDWR, os.ModePerm)
 	if err != nil {
 		return err
