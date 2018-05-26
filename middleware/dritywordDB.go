@@ -26,7 +26,7 @@ type DrityWordDB struct {
 
 //TableName *
 func (DrityWordDB) TableName() string {
-	return "sys_dritywordDB"
+	return "sys_drityword"
 }
 
 //AddDrityWord *
