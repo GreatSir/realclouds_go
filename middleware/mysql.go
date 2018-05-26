@@ -68,7 +68,7 @@ func DefaultMySQL() (*MySQL, error) {
 	return mysql, nil
 }
 
-//DB *
+//MySQL *
 type MySQL struct {
 	Gorm  *gorm.DB
 	Mutex sync.RWMutex

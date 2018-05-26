@@ -1,11 +1,13 @@
 package middleware
 
 import (
+	"sync"
+
 	"github.com/labstack/echo"
 	"github.com/shibingli/realclouds_go/utils"
-	"sync"
 )
 
+//DefaultSMS *
 func DefaultSMS() *SMS {
 
 	smsAppID := utils.GetENV("SMS_APPID")
@@ -32,6 +34,7 @@ func DefaultSMS() *SMS {
 	return sms
 }
 
+//SMS *
 type SMS struct {
 	APPID      string
 	APIKey     string

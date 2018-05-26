@@ -231,9 +231,9 @@ func NewRedis(host, password string, maxIdle, idleTimeout int, db string) (rPool
 		Dial: func() (redis.Conn, error) {
 			if 0 != len(db) {
 				return dialWithDB("tcp", host, password, db)
-			} else {
-				return dial("tcp", host, password)
 			}
+
+			return dial("tcp", host, password)
 		},
 	}
 	return
