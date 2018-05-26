@@ -17,7 +17,7 @@ const (
 //Drityword *
 type Drityword struct {
 	UserDictPath string
-	DrityWordMap *map[string]string
+	DrityWordMap map[string]string
 	Gorm         *gorm.DB
 	Mutex        sync.RWMutex
 }
@@ -56,7 +56,7 @@ func NewDrityWord(db *gorm.DB, userDictPath ...string) (drityWord *Drityword, er
 		drityWordMap[drityWord.MD5] = drityWord.Value
 	}
 
-	dw.DrityWordMap = &drityWordMap
+	dw.DrityWordMap = drityWordMap
 
 	if err = dw.WriteDrityWord(); nil != err {
 		return
@@ -73,7 +73,7 @@ func (d *Drityword) WriteDrityWord() error {
 	}
 	defer f.Close()
 
-	for _, v := range *d.DrityWordMap {
+	for _, v := range d.DrityWordMap {
 		if len(v) > 0 {
 			_, err := f.WriteString(v + "\n")
 			if nil != err {
