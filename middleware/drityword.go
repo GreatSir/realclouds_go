@@ -33,7 +33,7 @@ func (d *Drityword) MwDrityWord(next echo.HandlerFunc) echo.HandlerFunc {
 }
 
 //NewDrityWord *
-func NewDrityWord(db *gorm.DB, userDictPath ...string) (drityWord *DrityWord, err error) {
+func NewDrityWord(db *gorm.DB, userDictPath ...string) (drityWord *Drityword, err error) {
 	userDict := USER_DICT_PATH
 
 	if len(userDictPath) > 0 {
