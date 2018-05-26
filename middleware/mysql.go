@@ -77,8 +77,6 @@ type MySQL struct {
 //MwMySQL MySQL middleware
 func (m *MySQL) MwMySQL(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		m.Mutex.Lock()
-		defer m.Mutex.Unlock()
 		c.Set("mysql", m.Gorm)
 		return next(c)
 	}

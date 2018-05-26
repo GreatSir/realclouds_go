@@ -45,8 +45,6 @@ type SMS struct {
 //MwSMS SMS middleware
 func (s *SMS) MwSMS(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		s.Mutex.Lock()
-		defer s.Mutex.Unlock()
 		c.Set("sms", s)
 		return next(c)
 	}

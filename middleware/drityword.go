@@ -25,8 +25,6 @@ type Drityword struct {
 //MwDrityWord Drity word middleware
 func (d *Drityword) MwDrityWord(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		d.Mutex.Lock()
-		defer d.Mutex.Unlock()
 		c.Set("drityword", d)
 		return next(c)
 	}
