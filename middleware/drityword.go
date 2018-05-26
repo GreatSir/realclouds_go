@@ -5,6 +5,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 )
 
@@ -13,15 +14,16 @@ const (
 	USER_DICT_PATH = "/tmp/userdict.txt"
 )
 
-//DrityWord *
-type DrityWord struct {
+//Drityword *
+type Drityword struct {
 	UserDictPath string
 	DrityWordMap *map[string]string
+	Gorm         *gorm.DB
 	Mutex        sync.RWMutex
 }
 
 //MwDrityWord Drity word middleware
-func (d *DrityWord) MwDrityWord(next echo.HandlerFunc) echo.HandlerFunc {
+func (d *Drityword) MwDrityWord(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		d.Mutex.Lock()
 		defer d.Mutex.Unlock()
@@ -31,17 +33,26 @@ func (d *DrityWord) MwDrityWord(next echo.HandlerFunc) echo.HandlerFunc {
 }
 
 //NewDrityWord *
-func NewDrityWord(drityWordMap *map[string]string, userDictPath ...string) (drityWord *DrityWord, err error) {
+func NewDrityWord(db *gorm.DB, userDictPath ...string) (drityWord *DrityWord, err error) {
 	userDict := USER_DICT_PATH
 
 	if len(userDictPath) > 0 {
 		userDict = strings.TrimSpace(userDictPath[0])
 	}
 
-	dw := &DrityWord{
+	dw := &Drityword{
 		UserDictPath: strings.TrimSpace(userDict),
-		DrityWordMap: drityWordMap,
 	}
+
+	_, drityWords := FindDrityWords(db)
+
+	drityWordMap := make(map[string]string)
+
+	for _, drityWord := range drityWords {
+		drityWordMap[drityWord.MD5] = drityWord.Value
+	}
+
+	dw.DrityWordMap = &drityWordMap
 
 	if err = dw.WriteDrityWord(); nil != err {
 		return
@@ -51,7 +62,7 @@ func NewDrityWord(drityWordMap *map[string]string, userDictPath ...string) (drit
 }
 
 //WriteDrityWord *
-func (d *DrityWord) WriteDrityWord() error {
+func (d *Drityword) WriteDrityWord() error {
 	f, err := os.OpenFile(d.UserDictPath, os.O_CREATE|os.O_RDWR, os.ModePerm)
 	if err != nil {
 		return err

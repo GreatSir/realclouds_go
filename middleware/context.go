@@ -133,8 +133,8 @@ func (c *Context) SMS() *SMS {
 }
 
 //DrityWord 获取 Drity word
-func (c *Context) DrityWord() *DrityWord {
-	return c.Get("drityword").(*DrityWord)
+func (c *Context) DrityWord() *Drityword {
+	return c.Get("drityword").(*Drityword)
 }
 
 //UpdateDrityWord 更新 Drity word
