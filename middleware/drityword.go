@@ -40,6 +40,11 @@ func NewDrityWord(db *gorm.DB, userDictPath ...string) (drityWord *Drityword, er
 		userDict = strings.TrimSpace(userDictPath[0])
 	}
 
+	err = db.AutoMigrate(&DrityWord{}).Error
+	if nil != err {
+		return nil, err
+	}
+
 	dw := &Drityword{
 		UserDictPath: strings.TrimSpace(userDict),
 		Gorm:         db,
