@@ -139,7 +139,7 @@ func (c *Context) DrityWord() *Drityword {
 
 //UpdateDrityWord 更新 Drity word
 func (c *Context) UpdateDrityWord(drityWordMap map[string]string) error {
-	c.DrityWord().DrityWordMap = drityWordMap
+	c.DrityWord().DrityWordMap = &drityWordMap
 	return c.DrityWord().WriteDrityWord()
 }
 
