@@ -127,9 +127,14 @@ func (c *Context) Redis() *Redis {
 	return c.Get("redis").(*Redis)
 }
 
-//Redis 获取 SMS info
+//SMS 获取 SMS info
 func (c *Context) SMS() *SMS {
 	return c.Get("sms").(*SMS)
+}
+
+//DrityWord 获取 Drity word
+func (c *Context) DrityWord() *DrityWord {
+	return c.Get("drityword").(*DrityWord)
 }
 
 //NewCtx 获取 WebContext
