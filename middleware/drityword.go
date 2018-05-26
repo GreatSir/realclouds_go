@@ -38,12 +38,12 @@ func NewDrityWord(drityWordMap *map[string]string, userDictPath ...string) (drit
 		userDict = strings.TrimSpace(userDictPath[0])
 	}
 
-	drityWord = &DrityWord{
+	dw := &DrityWord{
 		UserDictPath: strings.TrimSpace(userDict),
 		DrityWordMap: drityWordMap,
 	}
 
-	if err = drityWord.WriteDrityWord(); nil != err {
+	if err = dw.WriteDrityWord(); nil != err {
 		return
 	}
 
@@ -58,9 +58,9 @@ func (d *DrityWord) WriteDrityWord() error {
 	}
 	defer f.Close()
 
-	for _, drityWord := range *d.DrityWordMap {
-		if len(drityWord) > 0 {
-			_, err := f.WriteString(drityWord + "\n")
+	for _, v := range *d.DrityWordMap {
+		if len(v) > 0 {
+			_, err := f.WriteString(v + "\n")
 			if nil != err {
 				return err
 			}
