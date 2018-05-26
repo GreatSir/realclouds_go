@@ -42,6 +42,7 @@ func NewDrityWord(db *gorm.DB, userDictPath ...string) (drityWord *Drityword, er
 
 	dw := &Drityword{
 		UserDictPath: strings.TrimSpace(userDict),
+		Gorm:         db,
 	}
 
 	_, drityWords := FindDrityWords(db)
