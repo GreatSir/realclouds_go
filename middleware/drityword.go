@@ -42,7 +42,7 @@ func NewDrityWord(db *gorm.DB, userDictPath ...string) (drityWord *DrityWord, er
 		return nil, err
 	}
 
-	dw := &DrityWord{
+	drityWord = &DrityWord{
 		UserDictPath: strings.TrimSpace(userDict),
 	}
 
@@ -54,9 +54,9 @@ func NewDrityWord(db *gorm.DB, userDictPath ...string) (drityWord *DrityWord, er
 		drityWordMap[drityWord.MD5] = drityWord.Value
 	}
 
-	dw.DrityWordMap = &drityWordMap
+	drityWord.DrityWordMap = &drityWordMap
 
-	if err = dw.WriteDrityWord(); nil != err {
+	if err = drityWord.WriteDrityWord(); nil != err {
 		return
 	}
 
