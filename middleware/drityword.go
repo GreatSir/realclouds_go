@@ -89,7 +89,7 @@ func (d *DrityWord) WriteDrityWord() error {
 func (d *DrityWord) Subscription(rPool *redis.Pool) error {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	err := ListenPubSubChannels(rPool, ctx,
+	err := ListenPubSubChannels(ctx, rPool,
 		func() error {
 			fmt.Printf("Subscription start.")
 			return nil
@@ -107,5 +107,6 @@ func (d *DrityWord) Subscription(rPool *redis.Pool) error {
 	if nil != err {
 		return err
 	}
+
 	return nil
 }

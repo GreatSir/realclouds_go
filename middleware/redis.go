@@ -99,8 +99,29 @@ func (r *Redis) Publish(key string, msg interface{}) (err error) {
 }
 
 //ListenPubSubChannels *
-func ListenPubSubChannels(rPool *redis.Pool,
+func (r *Redis) ListenPubSubChannels(
 	ctx context.Context,
+	onStart func() error,
+	onMessage func(channel string, data []byte) error,
+	channels ...string) (err error) {
+
+	return listenPubSubChannels(ctx, r.RedisPool, onStart, onMessage, channels...)
+}
+
+//ListenPubSubChannels *
+func ListenPubSubChannels(
+	ctx context.Context,
+	rPool *redis.Pool,
+	onStart func() error,
+	onMessage func(channel string, data []byte) error,
+	channels ...string) (err error) {
+
+	return listenPubSubChannels(ctx, rPool, onStart, onMessage, channels...)
+}
+
+func listenPubSubChannels(
+	ctx context.Context,
+	rPool *redis.Pool,
 	onStart func() error,
 	onMessage func(channel string, data []byte) error,
 	channels ...string) (err error) {
