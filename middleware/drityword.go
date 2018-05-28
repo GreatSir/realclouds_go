@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/garyburd/redigo/redis"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 )
@@ -85,10 +86,10 @@ func (d *DrityWord) WriteDrityWord() error {
 }
 
 //Subscription *
-func (d *DrityWord) Subscription(redis *Redis) error {
+func (d *DrityWord) Subscription(rPool *redis.Pool) error {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	err := redis.ListenPubSubChannels(ctx,
+	err := ListenPubSubChannels(rPool, ctx,
 		func() error {
 			fmt.Printf("Subscription start.")
 			return nil

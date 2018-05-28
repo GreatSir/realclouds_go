@@ -99,11 +99,13 @@ func (r *Redis) Publish(key string, msg interface{}) (err error) {
 }
 
 //ListenPubSubChannels *
-func (r *Redis) ListenPubSubChannels(ctx context.Context, onStart func() error,
+func ListenPubSubChannels(rPool *redis.Pool,
+	ctx context.Context,
+	onStart func() error,
 	onMessage func(channel string, data []byte) error,
 	channels ...string) (err error) {
 
-	conn := r.RedisPool.Get()
+	conn := rPool.Get()
 	defer conn.Close()
 	if err = conn.Err(); err != nil {
 		return
