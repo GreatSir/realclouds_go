@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"encoding/json"
 	"strings"
 	"sync"
@@ -80,6 +81,92 @@ func (r *Redis) Setex(key string, exp int, value interface{}) (err error) {
 		return
 	}
 	return
+}
+
+//Publish *
+func (r *Redis) Publish(key string, msg interface{}) (err error) {
+	key = strings.TrimSpace(key)
+	conn := r.RedisPool.Get()
+	defer conn.Close()
+	if err = conn.Err(); err != nil {
+		return
+	}
+	_, err = conn.Do("PUBLISH", key, msg)
+	if nil != err {
+		return
+	}
+	return
+}
+
+//ListenPubSubChannels *
+func (r *Redis) ListenPubSubChannels(ctx context.Context, onStart func() error,
+	onMessage func(channel string, data []byte) error,
+	channels ...string) (err error) {
+
+	conn := r.RedisPool.Get()
+	defer conn.Close()
+	if err = conn.Err(); err != nil {
+		return
+	}
+
+	psc := redis.PubSubConn{
+		Conn: conn,
+	}
+
+	done := make(chan error, 1)
+
+	go func() {
+		for {
+			switch n := psc.Receive().(type) {
+			case error:
+				done <- n
+				return
+			case redis.Message:
+				if err := onMessage(n.Channel, n.Data); err != nil {
+					done <- err
+					return
+				}
+			case redis.Subscription:
+				switch n.Count {
+				case len(channels):
+					if err := onStart(); err != nil {
+						done <- err
+						return
+					}
+				case 0:
+					done <- nil
+					return
+				}
+			}
+		}
+	}()
+
+	ticker := time.NewTicker(time.Duration(5 * time.Second))
+	defer ticker.Stop()
+
+loop:
+	for err == nil {
+		select {
+		case <-ticker.C:
+			// Send ping to test health of connection and server. If
+			// corresponding pong is not received, then receive on the
+			// connection will timeout and the receive goroutine will exit.
+			if err = psc.Ping(""); err != nil {
+				break loop
+			}
+		case <-ctx.Done():
+			break loop
+		case err := <-done:
+			// Return error from the receive goroutine.
+			return err
+		}
+	}
+
+	// Signal the receiving goroutine to exit by unsubscribing from all channels.
+	psc.Unsubscribe()
+
+	// Wait for goroutine to complete.
+	return <-done
 }
 
 //FlushDB **
