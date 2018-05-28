@@ -148,16 +148,12 @@ loop:
 	for err == nil {
 		select {
 		case <-ticker.C:
-			// Send ping to test health of connection and server. If
-			// corresponding pong is not received, then receive on the
-			// connection will timeout and the receive goroutine will exit.
 			if err = psc.Ping(""); err != nil {
 				break loop
 			}
 		case <-ctx.Done():
 			break loop
 		case err := <-done:
-			// Return error from the receive goroutine.
 			return err
 		}
 	}

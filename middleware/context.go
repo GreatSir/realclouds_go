@@ -15,6 +15,8 @@ import (
 	"github.com/yanyiwu/gojieba"
 )
 
+const DRITYWORD_UP_SUBSCRIPTION_KEY = "drityword_up"
+
 //MwContext Context middleware
 func MwContext(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
