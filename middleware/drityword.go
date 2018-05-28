@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"strings"
 	"sync"
@@ -78,6 +80,31 @@ func (d *DrityWord) WriteDrityWord() error {
 				return err
 			}
 		}
+	}
+	return nil
+}
+
+//Subscription *
+func (d *DrityWord) Subscription(redis *Redis) error {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	err := redis.ListenPubSubChannels(ctx,
+		func() error {
+			fmt.Printf("Subscription start.")
+			return nil
+		},
+		func(channel string, message []byte) error {
+			fmt.Printf("channel: %s, message: %s\n", channel, message)
+
+			if string(message) == "goodbye" {
+				cancel()
+			}
+			return nil
+		},
+		DRITYWORD_UP_SUBSCRIPTION_KEY)
+
+	if nil != err {
+		return err
 	}
 	return nil
 }
