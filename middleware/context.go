@@ -1,15 +1,18 @@
 package middleware
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"unicode/utf8"
 
 	session "github.com/ipfans/echo-session"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"github.com/shibingli/realclouds_go/utils"
+	"github.com/yanyiwu/gojieba"
 )
 
 //MwContext Context middleware
@@ -141,6 +144,31 @@ func (c *Context) DrityWord() *DrityWord {
 func (c *Context) UpdateDrityWord(drityWordMap map[string]string) error {
 	c.DrityWord().DrityWordMap = &drityWordMap
 	return c.DrityWord().WriteDrityWord()
+}
+
+//DrityWordFilter *
+func (c *Context) DrityWordFilter(source string) string {
+	source = strings.TrimSpace(source)
+
+	x := gojieba.NewJieba(gojieba.DICT_PATH, gojieba.HMM_PATH, c.DrityWord().UserDictPath)
+	defer x.Free()
+
+	var buf bytes.Buffer
+
+	words := x.Cut(source, true)
+	dwm := *c.DrityWord().DrityWordMap
+
+	for _, word := range words {
+		md5Word := utils.StringUtils(word).MD5()
+		_, ok := dwm[md5Word]
+		if ok {
+			buf.WriteString(strings.Repeat("*", utf8.RuneCountInString(word)))
+		} else {
+			buf.WriteString(word)
+		}
+	}
+
+	return buf.String()
 }
 
 //NewCtx 获取 WebContext
