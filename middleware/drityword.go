@@ -95,7 +95,7 @@ func (d *DrityWord) Subscription(rPool *redis.Pool) error {
 			return nil
 		},
 		func(channel string, message []byte) error {
-			fmt.Printf("channel: %s, message: %s\n", channel, message)
+			fmt.Printf("channel: %s, message: %v\n", channel, string(message))
 
 			if string(message) == "goodbye" {
 				cancel()
