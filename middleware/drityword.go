@@ -102,6 +102,14 @@ func (d *DrityWord) Subscription(rPool *redis.Pool) error {
 			}
 			return nil
 		},
+		func(pattern, channel string, message []byte) error {
+			fmt.Printf("pattern: %s, channel: %s, message: %v\n", pattern, channel, string(message))
+
+			if string(message) == "goodbye" {
+				cancel()
+			}
+			return nil
+		},
 		DRITYWORD_UP_SUBSCRIPTION_KEY)
 
 	if nil != err {

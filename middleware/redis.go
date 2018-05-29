@@ -103,9 +103,10 @@ func (r *Redis) ListenPubSubChannels(
 	ctx context.Context,
 	onStart func() error,
 	onMessage func(channel string, data []byte) error,
+	onPMessage func(pattern, channel string, data []byte) error,
 	channels ...string) (err error) {
 
-	return listenPubSubChannels(ctx, r.RedisPool, onStart, onMessage, channels...)
+	return listenPubSubChannels(ctx, r.RedisPool, onStart, onMessage, onPMessage, channels...)
 }
 
 //ListenPubSubChannels *
@@ -114,9 +115,10 @@ func ListenPubSubChannels(
 	rPool *redis.Pool,
 	onStart func() error,
 	onMessage func(channel string, data []byte) error,
+	onPMessage func(pattern, channel string, data []byte) error,
 	channels ...string) (err error) {
 
-	return listenPubSubChannels(ctx, rPool, onStart, onMessage, channels...)
+	return listenPubSubChannels(ctx, rPool, onStart, onMessage, onPMessage, channels...)
 }
 
 func listenPubSubChannels(
@@ -124,6 +126,7 @@ func listenPubSubChannels(
 	rPool *redis.Pool,
 	onStart func() error,
 	onMessage func(channel string, data []byte) error,
+	onPMessage func(pattern, channel string, data []byte) error,
 	channels ...string) (err error) {
 
 	conn := rPool.Get()
@@ -157,9 +160,8 @@ func listenPubSubChannels(
 					done <- err
 					return
 				}
-			case redis.PMessage: //模式订阅psubscribe
-				// fmt.Printf("PMessage: %s %s %s\n", v.Pattern, v.Channel, v.Data)
-				if err := onMessage(n.Channel, n.Data); err != nil {
+			case redis.PMessage:
+				if err := onPMessage(n.Pattern, n.Channel, n.Data); err != nil {
 					done <- err
 					return
 				}
