@@ -104,9 +104,10 @@ func (r *Redis) ListenPubSubChannels(
 	onStart func() error,
 	onMessage func(channel string, data []byte) error,
 	onPMessage func(pattern, channel string, data []byte) error,
-	channels ...string) (err error) {
+	channels []string,
+	pChannels []string) (err error) {
 
-	return listenPubSubChannels(ctx, r.RedisPool, onStart, onMessage, onPMessage, channels...)
+	return listenPubSubChannels(ctx, r.RedisPool, onStart, onMessage, onPMessage, channels, pChannels)
 }
 
 //ListenPubSubChannels *
@@ -116,9 +117,10 @@ func ListenPubSubChannels(
 	onStart func() error,
 	onMessage func(channel string, data []byte) error,
 	onPMessage func(pattern, channel string, data []byte) error,
-	channels ...string) (err error) {
+	channels []string,
+	pChannels []string) (err error) {
 
-	return listenPubSubChannels(ctx, rPool, onStart, onMessage, onPMessage, channels...)
+	return listenPubSubChannels(ctx, rPool, onStart, onMessage, onPMessage, channels, pChannels)
 }
 
 func listenPubSubChannels(
@@ -127,7 +129,8 @@ func listenPubSubChannels(
 	onStart func() error,
 	onMessage func(channel string, data []byte) error,
 	onPMessage func(pattern, channel string, data []byte) error,
-	channels ...string) (err error) {
+	channels []string,
+	pChannels []string) (err error) {
 
 	conn := rPool.Get()
 	defer conn.Close()
@@ -139,12 +142,16 @@ func listenPubSubChannels(
 		Conn: conn,
 	}
 
-	if err := psc.Subscribe(redis.Args{}.AddFlat(channels)...); err != nil {
-		return err
+	if len(channels) > 0 {
+		if err := psc.Subscribe(redis.Args{}.AddFlat(channels)...); err != nil {
+			return err
+		}
 	}
 
-	if err := psc.PSubscribe(redis.Args{}.AddFlat(channels)...); err != nil {
-		return err
+	if len(pChannels) > 0 {
+		if err := psc.PSubscribe(redis.Args{}.AddFlat(channels)...); err != nil {
+			return err
+		}
 	}
 
 	done := make(chan error, 1)

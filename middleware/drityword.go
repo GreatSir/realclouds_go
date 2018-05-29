@@ -135,7 +135,7 @@ func (d *DrityWord) Subscription(rPool *redis.Pool) error {
 			return nil
 		},
 		nil,
-		DRITYWORD_UP_SUBSCRIPTION_KEY)
+		[]string{DRITYWORD_UP_SUBSCRIPTION_KEY}, []string{})
 
 	if nil != err {
 		fmt.Printf("\nDrity word subscription error: %v\n", err.Error())
