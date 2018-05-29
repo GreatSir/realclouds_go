@@ -89,7 +89,8 @@ func (d *DrityWord) WriteDrityWord() error {
 }
 
 //Subscription *
-func (d *DrityWord) Subscription(rPool *redis.Pool) error {
+func (d *DrityWord) Subscription(rPool *redis.Pool, errChan chan error) {
+
 	ctx, cancel := context.WithCancel(context.Background())
 
 	err := ListenPubSubChannels(ctx, rPool,
@@ -118,7 +119,7 @@ func (d *DrityWord) Subscription(rPool *redis.Pool) error {
 
 				if err := d.WriteDrityWord(); nil != err {
 					cancel()
-					return err
+					errChan <- err
 				}
 				cancel()
 			}
@@ -128,8 +129,6 @@ func (d *DrityWord) Subscription(rPool *redis.Pool) error {
 		DRITYWORD_UP_SUBSCRIPTION_KEY)
 
 	if nil != err {
-		return err
+		errChan <- err
 	}
-
-	return nil
 }
