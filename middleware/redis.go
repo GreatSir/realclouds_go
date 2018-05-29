@@ -184,31 +184,6 @@ func listenPubSubChannels(
 		}
 	}()
 
-	ticker := time.NewTicker(time.Duration(5 * time.Second))
-	defer ticker.Stop()
-
-loop:
-	for err == nil {
-		select {
-		case <-ticker.C:
-			if err = psc.Ping(""); err != nil {
-				break loop
-			}
-		case <-ctx.Done():
-			break loop
-		case err := <-done:
-			return err
-		}
-	}
-
-	if err := psc.Unsubscribe(); nil != err {
-		done <- err
-	}
-
-	if err := psc.PUnsubscribe(); nil != err {
-		done <- err
-	}
-
 	return <-done
 }
 
