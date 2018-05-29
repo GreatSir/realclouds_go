@@ -70,6 +70,7 @@ func FindDrityWords(db *gorm.DB, args ...string) (count int, data []DrityWordDB)
 
 	ids, _ := argMap["ids"]
 	md5s, _ := argMap["md5s"]
+	keywords, _ := argMap["keywords"]
 
 	if len(ids) != 0 {
 		dwIDs := strings.Split(ids, ",")
@@ -84,6 +85,12 @@ func FindDrityWords(db *gorm.DB, args ...string) (count int, data []DrityWordDB)
 		idsLen := len(dwMD5s)
 		if idsLen > 0 {
 			db = db.Where("md5 in (?)", dwMD5s)
+		}
+	}
+
+	if len(keywords) != 0 {
+		if len(keywords) != 0 {
+			db = db.Where("name LIKE ?", "%"+keywords+"%").Or("description LIKE ?", "%"+keywords+"%").Or("value LIKE ?", "%"+keywords+"%").Or("md5 LIKE ?", "%"+keywords+"%")
 		}
 	}
 
