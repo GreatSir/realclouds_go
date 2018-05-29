@@ -7,10 +7,12 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/garyburd/redigo/redis"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
+	"github.com/shibingli/realclouds_go/utils"
 )
 
 const (
@@ -117,7 +119,7 @@ func (d *DrityWord) Subscription(rPool *redis.Pool, errChan chan error) {
 
 					d.DrityWordMap = &drityWordMap
 
-					fmt.Printf("Reload drity word: %v\n", drityWordMap)
+					fmt.Printf("Reload drity word at: %v\n", utils.DateToStr(time.Now()))
 
 					if err := d.WriteDrityWord(); nil != err {
 						cancel()
