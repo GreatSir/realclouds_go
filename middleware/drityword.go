@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"os"
@@ -97,21 +98,33 @@ func (d *DrityWord) Subscription(rPool *redis.Pool) error {
 			return nil
 		},
 		func(channel string, message []byte) error {
-			fmt.Printf("channel: %s, message: %v\n", channel, string(message))
+			msgStr := string(bytes.TrimSpace(message))
+			channel = strings.TrimSpace(channel)
 
-			if string(message) == "goodbye" {
+			fmt.Printf("channel: %s, message: %v\n", channel, msgStr)
+
+			if DRITYWORD_UP_SUBSCRIPTION_KEY == channel {
+				_, drityWords := FindDrityWords(d.Gorm)
+
+				drityWordMap := make(map[string]string)
+
+				for _, drityWord := range drityWords {
+					drityWordMap[drityWord.MD5] = drityWord.Value
+				}
+
+				d.DrityWordMap = &drityWordMap
+
+				fmt.Printf("Reload drity word: %v\n", drityWordMap)
+
+				if err := d.WriteDrityWord(); nil != err {
+					cancel()
+					return err
+				}
 				cancel()
 			}
 			return nil
 		},
-		func(pattern, channel string, message []byte) error {
-			fmt.Printf("pattern: %s, channel: %s, message: %v\n", pattern, channel, string(message))
-
-			if string(message) == "goodbye" {
-				cancel()
-			}
-			return nil
-		},
+		nil,
 		DRITYWORD_UP_SUBSCRIPTION_KEY)
 
 	if nil != err {
