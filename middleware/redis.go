@@ -136,6 +136,14 @@ func listenPubSubChannels(
 		Conn: conn,
 	}
 
+	if err := psc.Subscribe(redis.Args{}.AddFlat(channels)...); err != nil {
+		return err
+	}
+
+	if err := psc.PSubscribe(redis.Args{}.AddFlat(channels)...); err != nil {
+		return err
+	}
+
 	done := make(chan error, 1)
 
 	go func() {
@@ -145,6 +153,12 @@ func listenPubSubChannels(
 				done <- n
 				return
 			case redis.Message:
+				if err := onMessage(n.Channel, n.Data); err != nil {
+					done <- err
+					return
+				}
+			case redis.PMessage: //模式订阅psubscribe
+				// fmt.Printf("PMessage: %s %s %s\n", v.Pattern, v.Channel, v.Data)
 				if err := onMessage(n.Channel, n.Data); err != nil {
 					done <- err
 					return
