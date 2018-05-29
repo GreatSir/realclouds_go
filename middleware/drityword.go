@@ -21,6 +21,7 @@ const (
 type DrityWord struct {
 	UserDictPath string
 	DrityWordMap *map[string]string
+	Gorm         *gorm.DB
 	Mutex        sync.RWMutex
 }
 
@@ -47,6 +48,7 @@ func NewDrityWord(db *gorm.DB, userDictPath ...string) (drityWord *DrityWord, er
 
 	drityWord = &DrityWord{
 		UserDictPath: strings.TrimSpace(userDict),
+		Gorm:         db,
 	}
 
 	_, drityWords := FindDrityWords(db)
