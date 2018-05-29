@@ -125,6 +125,8 @@ func (d *DrityWord) Subscription(rPool *redis.Pool, errChan chan error) {
 					}
 					cancel()
 				}
+			} else {
+				fmt.Printf("nil data\n")
 			}
 			return nil
 		},
