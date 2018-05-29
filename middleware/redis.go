@@ -156,14 +156,18 @@ func listenPubSubChannels(
 				done <- n
 				return
 			case redis.Message:
-				if err := onMessage(n.Channel, n.Data); err != nil {
-					done <- err
-					return
+				if nil != onMessage {
+					if err := onMessage(n.Channel, n.Data); err != nil {
+						done <- err
+						return
+					}
 				}
 			case redis.PMessage:
-				if err := onPMessage(n.Pattern, n.Channel, n.Data); err != nil {
-					done <- err
-					return
+				if nil != onPMessage {
+					if err := onPMessage(n.Pattern, n.Channel, n.Data); err != nil {
+						done <- err
+						return
+					}
 				}
 			case redis.Subscription:
 				switch n.Count {
@@ -197,10 +201,14 @@ loop:
 		}
 	}
 
-	// Signal the receiving goroutine to exit by unsubscribing from all channels.
-	psc.Unsubscribe()
+	if err := psc.Unsubscribe(); nil != err {
+		done <- err
+	}
 
-	// Wait for goroutine to complete.
+	if err := psc.PUnsubscribe(); nil != err {
+		done <- err
+	}
+
 	return <-done
 }
 

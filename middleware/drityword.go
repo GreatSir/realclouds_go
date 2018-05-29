@@ -93,7 +93,7 @@ func (d *DrityWord) Subscription(rPool *redis.Pool) error {
 
 	err := ListenPubSubChannels(ctx, rPool,
 		func() error {
-			fmt.Printf("Subscription start.")
+			fmt.Printf("\nDrity word subscription start...\n\n")
 			return nil
 		},
 		func(channel string, message []byte) error {
