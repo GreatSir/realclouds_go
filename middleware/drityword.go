@@ -154,13 +154,13 @@ func (d *DrityWord) Subscription(rPool *redis.Pool) error {
 
 					d.DrityWordMap = &drityWordMap
 
-					fmt.Printf("\nReload drity word at: %v\n", utils.DateToStr(time.Now()))
-
 					if err := d.WriteDrityWord(); nil != err {
 						cancel()
 						fmt.Printf("\nDrity word subscription error: %v\n", err.Error())
 						return err
 					}
+
+					fmt.Printf("\nReload drity word at: %v\n", utils.DateToStr(time.Now()))
 					cancel()
 					return nil
 				}
