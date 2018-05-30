@@ -81,7 +81,7 @@ func NewDrityWord(db *gorm.DB, userDictPath ...string) (drityWord *DrityWord, er
 
 //WriteDrityWord *
 func (d *DrityWord) WriteDrityWord() error {
-	f, err := os.OpenFile(d.UserDictPath, os.O_CREATE|os.O_RDWR|os.O_TRUNC, os.ModePerm)
+	f, err := os.OpenFile(d.UserDictPath, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0666)
 	if err != nil {
 		return err
 	}
