@@ -81,7 +81,7 @@ func NewDrityWord(db *gorm.DB, userDictPath ...string) (drityWord *DrityWord, er
 
 //WriteDrityWord *
 func (d *DrityWord) WriteDrityWord() error {
-	f, err := os.OpenFile(d.UserDictPath, os.O_CREATE|os.O_RDWR, os.ModePerm)
+	f, err := os.OpenFile(d.UserDictPath, os.O_CREATE|os.O_RDWR|os.O_TRUNC, os.ModePerm)
 	if err != nil {
 		return err
 	}
@@ -89,7 +89,8 @@ func (d *DrityWord) WriteDrityWord() error {
 
 	for _, v := range *d.DrityWordMap {
 		if len(v) > 0 {
-			_, err := f.WriteString(v + " 100000\n")
+			str := fmt.Sprintf("%s %d\n", v, 100000)
+			_, err := f.WriteString(str)
 			if nil != err {
 				return err
 			}
