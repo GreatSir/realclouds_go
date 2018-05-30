@@ -12,7 +12,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"github.com/shibingli/realclouds_go/utils"
-	"github.com/yanyiwu/gojieba"
 )
 
 const DRITYWORD_UP_SUBSCRIPTION_KEY = "drityword_up"
@@ -152,21 +151,18 @@ func (c *Context) UpdateDrityWord(drityWordMap map[string]string) error {
 func (c *Context) DrityWordFilter(source string) string {
 	source = strings.TrimSpace(source)
 
-	x := gojieba.NewJieba(gojieba.DICT_PATH, gojieba.HMM_PATH, c.DrityWord().UserDictPath)
-	defer x.Free()
-
 	var buf bytes.Buffer
 
-	words := x.Cut(source, true)
-	dwm := *c.DrityWord().DrityWordMap
+	segments := c.DrityWord().Segmenter.Segment([]byte(source))
 
-	for _, word := range words {
-		md5Word := utils.StringUtils(word).MD5()
+	dwm := *c.DrityWord().DrityWordMap
+	for _, seg := range segments {
+		md5Word := utils.StringUtils(seg.Token().Text()).MD5()
 		_, ok := dwm[md5Word]
 		if ok {
-			buf.WriteString(strings.Repeat("*", utf8.RuneCountInString(word)))
+			buf.WriteString(strings.Repeat("*", utf8.RuneCountInString(seg.Token().Text())))
 		} else {
-			buf.WriteString(word)
+			buf.WriteString(seg.Token().Text())
 		}
 	}
 

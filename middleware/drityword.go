@@ -10,22 +10,28 @@ import (
 	"time"
 
 	"github.com/garyburd/redigo/redis"
+	"github.com/go-ego/gse"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"github.com/shibingli/realclouds_go/utils"
 )
 
 const (
+	//DEFAULT_DICT_DIR *
+	DEFAULT_DICT_DIR = "dict_data/dict"
+
 	//USER_DICT_PATH *
 	USER_DICT_PATH = "/tmp/userdict.txt"
 )
 
 //DrityWord *
 type DrityWord struct {
-	UserDictPath string
-	DrityWordMap *map[string]string
-	Gorm         *gorm.DB
-	Mutex        sync.RWMutex
+	DefaultDictDir string
+	UserDictPath   string
+	DrityWordMap   *map[string]string
+	Gorm           *gorm.DB
+	Segmenter      *gse.Segmenter
+	Mutex          sync.RWMutex
 }
 
 //MwDrityWord Drity word middleware
@@ -50,8 +56,10 @@ func NewDrityWord(db *gorm.DB, userDictPath ...string) (drityWord *DrityWord, er
 	}
 
 	drityWord = &DrityWord{
-		UserDictPath: strings.TrimSpace(userDict),
-		Gorm:         db,
+		UserDictPath:   strings.TrimSpace(userDict),
+		DefaultDictDir: strings.TrimSpace(DEFAULT_DICT_DIR),
+		Segmenter:      new(gse.Segmenter),
+		Gorm:           db,
 	}
 
 	_, drityWords := FindDrityWords(db)
@@ -81,12 +89,39 @@ func (d *DrityWord) WriteDrityWord() error {
 
 	for _, v := range *d.DrityWordMap {
 		if len(v) > 0 {
-			_, err := f.WriteString(v + "\n")
+			_, err := f.WriteString(v + " 100000\n")
 			if nil != err {
 				return err
 			}
 		}
 	}
+
+	if err := d.ReloadDict(); nil != err {
+		return err
+	}
+	return nil
+}
+
+//ReloadDict *
+func (d *DrityWord) ReloadDict() error {
+
+	pd := utils.GetProjectDir()
+
+	paths, err := utils.WalkPaths(utils.ArrayPath(pd, d.DefaultDictDir))
+	if nil != err {
+		return err
+	}
+
+	paths = append(paths, d.UserDictPath)
+
+	pathsStr := strings.Join(paths, ",")
+
+	fmt.Printf("Reload dict,paths: %s\n", pathsStr)
+
+	if err := d.Segmenter.LoadDict(pathsStr); nil != err {
+		return err
+	}
+
 	return nil
 }
 

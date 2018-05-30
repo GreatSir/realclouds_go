@@ -817,3 +817,36 @@ func GetFileSizeToUnit(fileSize int64) string {
 	}
 	return fs
 }
+
+//WalkPaths *
+func WalkPaths(path string) ([]string, error) {
+
+	suffix := ".dict"
+
+	paths := make([]string, 0, 0)
+
+	pathWalk := func(p string, f os.FileInfo, err error) error {
+		if f == nil {
+			return err
+		} else if f.IsDir() {
+			return nil
+		} else if (f.Mode() & os.ModeSymlink) > 0 {
+			return nil
+		}
+
+		if f.Size() > 0 {
+			if strings.HasSuffix(p, suffix) {
+				paths = append(paths, p)
+			}
+		}
+		return err
+	}
+
+	if err := filepath.Walk(strings.TrimRight(path, PathSeparator), func(p string, f os.FileInfo, err error) error {
+		return pathWalk(p, f, err)
+	}); nil != err {
+		return nil, err
+	}
+
+	return paths, nil
+}
