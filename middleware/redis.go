@@ -222,6 +222,21 @@ func (r *Redis) FlushAll() (err error) {
 	return
 }
 
+//Expire *
+func (r *Redis) Expire(key string, exp int) (err error) {
+	key = strings.TrimSpace(key)
+	conn := r.RedisPool.Get()
+	defer conn.Close()
+	if err = conn.Err(); err != nil {
+		return
+	}
+	_, err = conn.Do("EXPIRE", key, exp)
+	if nil != err {
+		return
+	}
+	return
+}
+
 //Del *
 func (r *Redis) Del(key string) (err error) {
 	key = strings.TrimSpace(key)
