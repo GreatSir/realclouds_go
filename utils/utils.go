@@ -24,6 +24,7 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -57,6 +58,22 @@ func GetENVToBool(key string) bool {
 		boo = false
 	}
 	return boo
+}
+
+//SetMaxProcs *
+func SetMaxProcs(num ...int) int {
+
+	numInt := 1
+
+	if runtime.NumCPU() > 1 {
+		numInt = runtime.NumCPU() - 1
+	}
+
+	if len(num) > 0 {
+		numInt = num[0]
+	}
+
+	return runtime.GOMAXPROCS(numInt)
 }
 
 func GetENVToInt(key string) (int, error) {
