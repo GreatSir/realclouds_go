@@ -89,7 +89,9 @@ func (k *Kafka) ASyncSendMessage(topic, msg string, key ...string) {
 	}
 
 	if len(key) > 0 {
-		producerMessage.Key = sarama.StringEncoder(key[0])
+		producerMessage.Key = sarama.StringEncoder(utils.StringUtils(key[0]).MD5())
+	} else {
+		producerMessage.Key = sarama.StringEncoder(utils.StringUtils(msg).MD5())
 	}
 
 	k.AsyncProducerCollector.Input() <- producerMessage
