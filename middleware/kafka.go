@@ -177,7 +177,7 @@ func (k *Kafka) Subscription(topics []string, group string,
 	defer consumer.Close()
 
 	signals := make(chan os.Signal, 1)
-	signal.Notify(signals, os.Interrupt)
+	signal.Notify(signals, os.Interrupt, os.Kill)
 
 	go func() {
 		for err := range consumer.Errors() {
