@@ -14,6 +14,11 @@ import (
 	"time"
 )
 
+var (
+	//DefaultKafkaVersion *
+	DefaultKafkaVersion = sarama.V0_9_0_1
+)
+
 //Kafka *
 type Kafka struct {
 	BrokerList             []string
@@ -98,7 +103,7 @@ func newSyncProducerCollector(brokerList []string) sarama.SyncProducer {
 		config.Net.TLS.Config = tlsConfig
 	}
 
-	config.Version = sarama.V0_10_2_1
+	config.Version = DefaultKafkaVersion
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Retry.Max = 10
 	config.Producer.Return.Successes = true
@@ -120,7 +125,7 @@ func newASyncProducerCollector(brokerList []string) sarama.AsyncProducer {
 		config.Net.TLS.Config = tlsConfig
 	}
 
-	config.Version = sarama.V0_10_2_1
+	config.Version = DefaultKafkaVersion
 	config.Producer.RequiredAcks = sarama.WaitForLocal
 	config.Producer.Compression = sarama.CompressionSnappy
 	config.Producer.Flush.Frequency = 500 * time.Millisecond
@@ -163,7 +168,7 @@ func (k *Kafka) Subscription(topics []string, group string,
 	onMessage func(topic string, partition int32, offset int64, key, value []byte) error) {
 
 	config := cluster.NewConfig()
-	config.Version = sarama.V0_10_2_1
+	config.Version = DefaultKafkaVersion
 	config.Consumer.Return.Errors = true
 	config.Group.Return.Notifications = true
 
