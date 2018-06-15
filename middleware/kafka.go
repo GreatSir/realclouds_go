@@ -20,7 +20,6 @@ import (
 //Kafka *
 type Kafka struct {
 	BrokerList             []string
-	Context                echo.Context
 	SyncProducerCollector  sarama.SyncProducer
 	AsyncProducerCollector sarama.AsyncProducer
 }
@@ -157,7 +156,6 @@ func getKafakaTLSConfigByEnv() (t *tls.Config) {
 //MwKafaka Kafa middleware
 func (k *Kafka) MwKafaka(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		k.Context = c
 		c.Set("kafaka", k)
 		return next(c)
 	}
@@ -165,7 +163,7 @@ func (k *Kafka) MwKafaka(next echo.HandlerFunc) echo.HandlerFunc {
 
 //Subscription *
 func (k *Kafka) Subscription(topics []string, group string,
-	onMessage func(c echo.Context, topic string, partition int32, offset int64, key, value []byte) error) {
+	onMessage func(topic string, partition int32, offset int64, key, value []byte) error) {
 
 	config := cluster.NewConfig()
 	config.Version = sarama.V0_10_2_1
@@ -198,7 +196,7 @@ func (k *Kafka) Subscription(topics []string, group string,
 		case msg, ok := <-consumer.Messages():
 			if ok {
 				if nil != onMessage {
-					err := onMessage(k.Context, msg.Topic, msg.Partition, msg.Offset, msg.Key, msg.Value)
+					err := onMessage(msg.Topic, msg.Partition, msg.Offset, msg.Key, msg.Value)
 					if err != nil {
 						log.Printf("Error: %s\n", err.Error())
 					} else {
