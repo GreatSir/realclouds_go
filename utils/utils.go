@@ -10,6 +10,8 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 	"crypto/sha512"
+	"crypto/tls"
+	"crypto/x509"
 	"encoding/base64"
 	"encoding/gob"
 	"encoding/hex"
@@ -17,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	mrand "math/rand"
 	"net/url"
 	"os"
@@ -115,6 +118,31 @@ func GetProjectDir() string {
 
 func ArrayPath(path ...string) string {
 	return strings.Join(path, PathSeparator)
+}
+
+//CreateTLSConfig *
+func CreateTLSConfig(certFile, keyFile, caFile string, verifySSL bool) (t *tls.Config) {
+	if certFile != "" && keyFile != "" && caFile != "" {
+		cert, err := tls.LoadX509KeyPair(certFile, keyFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		caCert, err := ioutil.ReadFile(caFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		caCertPool := x509.NewCertPool()
+		caCertPool.AppendCertsFromPEM(caCert)
+
+		t = &tls.Config{
+			Certificates:       []tls.Certificate{cert},
+			RootCAs:            caCertPool,
+			InsecureSkipVerify: verifySSL,
+		}
+	}
+	return t
 }
 
 //RegGob 将自定义 Struct 注册 Gob
