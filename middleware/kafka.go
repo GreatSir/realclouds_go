@@ -169,19 +169,19 @@ func (k *Kafka) Subscription(topics []string, group string,
 
 	consumer, err := cluster.NewConsumer(k.BrokerList, group, topics, config)
 	if err != nil {
-		log.Printf("Error: %s\n", err.Error())
+		log.Printf("Kafka New consumer error: %s\n", err.Error())
 	}
 	defer consumer.Close()
 
 	go func() {
 		for err := range consumer.Errors() {
-			log.Printf("Error: %s\n", err.Error())
+			log.Printf("Kafka New consumer errors: %s\n", err.Error())
 		}
 	}()
 
 	go func() {
 		for ntf := range consumer.Notifications() {
-			log.Printf("Rebalanced: %+v\n", ntf)
+			log.Printf("Kafka consumer notifications: %+v\n", ntf)
 		}
 	}()
 
@@ -192,7 +192,7 @@ func (k *Kafka) Subscription(topics []string, group string,
 				if nil != onMessage {
 					err := onMessage(msg.Topic, msg.Partition, msg.Offset, msg.Key, msg.Value)
 					if err != nil {
-						log.Printf("Error: %s\n", err.Error())
+						log.Printf("Kafka callback method error: %s\n", err.Error())
 					} else {
 						consumer.MarkOffset(msg, "")
 					}
