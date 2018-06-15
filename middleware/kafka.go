@@ -33,6 +33,7 @@ func NewKafka(brokerList []string) (kafka *Kafka, err error) {
 	}
 
 	kafka = &Kafka{
+		BrokerList:             brokerList,
 		SyncProducerCollector:  newSyncProducerCollector(brokerList),
 		AsyncProducerCollector: newASyncProducerCollector(brokerList),
 	}
@@ -173,7 +174,7 @@ func (k *Kafka) Subscription(topics []string, group string,
 
 	consumer, err := cluster.NewConsumer(k.BrokerList, group, topics, config)
 	if err != nil {
-		panic(err)
+		log.Printf("Error: %s\n", err.Error())
 	}
 	defer consumer.Close()
 
