@@ -58,14 +58,15 @@ type Redis struct {
 	Mutex     sync.RWMutex
 }
 
-//SrvVersion *
-func (r *Redis) SrvVersion() (data interface{}, err error) {
+//SrvInfo *
+func (r *Redis) SrvInfo(section string) (data interface{}, err error) {
+	section = strings.TrimSpace(section)
 	conn := r.RedisPool.Get()
 	defer conn.Close()
 	if err = conn.Err(); err != nil {
 		return
 	}
-	data, err = conn.Do("INFO", "redis_version")
+	data, err = conn.Do("INFO", section)
 	if nil != err {
 		return
 	}
