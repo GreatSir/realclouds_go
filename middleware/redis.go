@@ -58,6 +58,21 @@ type Redis struct {
 	Mutex     sync.RWMutex
 }
 
+//SrvVersion *
+func (r *Redis) SrvVersion(key string) (data interface{}, err error) {
+	key = strings.TrimSpace(key)
+	conn := r.RedisPool.Get()
+	defer conn.Close()
+	if err = conn.Err(); err != nil {
+		return
+	}
+	data, err = conn.Do("INFO", "redis_version")
+	if nil != err {
+		return
+	}
+	return
+}
+
 //MwRedis Redis middleware
 func (r *Redis) MwRedis(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
