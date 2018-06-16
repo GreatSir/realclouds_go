@@ -59,8 +59,7 @@ type Redis struct {
 }
 
 //SrvVersion *
-func (r *Redis) SrvVersion(key string) (data interface{}, err error) {
-	key = strings.TrimSpace(key)
+func (r *Redis) SrvVersion() (data interface{}, err error) {
 	conn := r.RedisPool.Get()
 	defer conn.Close()
 	if err = conn.Err(); err != nil {
