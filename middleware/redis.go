@@ -59,14 +59,15 @@ type Redis struct {
 }
 
 //SrvInfo *
-func (r *Redis) SrvInfo(section string) (data interface{}, err error) {
+func (r *Redis) SrvInfo(section string) (data string, err error) {
 	section = strings.TrimSpace(section)
 	conn := r.RedisPool.Get()
 	defer conn.Close()
 	if err = conn.Err(); err != nil {
 		return
 	}
-	data, err = conn.Do("INFO", section)
+
+	data, err = redis.String(conn.Do("INFO", section))
 	if nil != err {
 		return
 	}
