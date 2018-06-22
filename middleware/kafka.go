@@ -55,7 +55,7 @@ func (k *Kafka) Close() error {
 }
 
 //SyncSendMessage *
-func (k *Kafka) SyncSendMessage(topic, msg string, key ...string) {
+func (k *Kafka) SyncSendMessage(topic, msg string, key ...string) (partition int32, offset int64, err error) {
 	topic = strings.TrimSpace(topic)
 	msg = strings.TrimSpace(msg)
 
@@ -70,12 +70,9 @@ func (k *Kafka) SyncSendMessage(topic, msg string, key ...string) {
 		producerMessage.Key = sarama.StringEncoder(utils.StringUtils(msg).MD5())
 	}
 
-	partition, offset, err := k.SyncProducerCollector.SendMessage(producerMessage)
-	if err != nil {
-		fmt.Printf("Failed to store your data:, %s\n", err)
-	} else {
-		fmt.Printf("Your data is stored with unique identifier important/%d/%d\n", partition, offset)
-	}
+	partition, offset, err = k.SyncProducerCollector.SendMessage(producerMessage)
+
+	return
 }
 
 //ASyncSendMessage *

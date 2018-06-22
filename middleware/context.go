@@ -136,6 +136,11 @@ func (c *Context) SMS() *SMS {
 	return c.Get("sms").(*SMS)
 }
 
+//Kafaka 获取 Kafaka
+func (c *Context) Kafaka() *Kafka {
+	return c.Get("kafaka").(*Kafka)
+}
+
 //DrityWord 获取 Drity word
 func (c *Context) DrityWord() *DrityWord {
 	return c.Get("drityword").(*DrityWord)
