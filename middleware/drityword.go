@@ -9,6 +9,8 @@ import (
 	"sync"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/garyburd/redigo/redis"
 	"github.com/go-ego/gse"
 	"github.com/jinzhu/gorm"
@@ -117,7 +119,7 @@ func (d *DrityWord) ReloadDict() error {
 
 	pathsStr := strings.Join(paths, ",")
 
-	fmt.Printf("Reload dict,paths: %s\n", pathsStr)
+	log.Debugf("Reload dict,paths: %s\n", pathsStr)
 
 	if err := d.Segmenter.LoadDict(pathsStr); nil != err {
 		return err
@@ -133,7 +135,7 @@ func (d *DrityWord) Subscription(rPool *redis.Pool) error {
 
 	err := ListenPubSubChannels(ctx, rPool,
 		func() error {
-			fmt.Printf("\nDrity word subscription start...\n\n")
+			log.Infof("\nDrity word subscription start...\n\n")
 			return nil
 		},
 		func(channel string, message []byte) error {
@@ -142,7 +144,7 @@ func (d *DrityWord) Subscription(rPool *redis.Pool) error {
 			channel = strings.TrimSpace(channel)
 
 			if len(msgStr) > 0 && msgStr == "up" {
-				fmt.Printf("channel: %s, message: %v\n", channel, msgStr)
+				log.Debugf("channel: %s, message: %v\n", channel, msgStr)
 
 				if DRITYWORD_UP_SUBSCRIPTION_KEY == channel {
 					_, drityWords := FindDrityWords(d.Gorm)
@@ -157,16 +159,16 @@ func (d *DrityWord) Subscription(rPool *redis.Pool) error {
 
 					if err := d.WriteDrityWord(); nil != err {
 						cancel()
-						fmt.Printf("\nDrity word subscription error: %v\n", err.Error())
+						log.Errorf("\nDrity word subscription error: %v\n", err.Error())
 						return err
 					}
 
-					fmt.Printf("\nReload drity word at: %v\n", utils.DateToStr(time.Now()))
+					log.Debugf("\nReload drity word at: %v\n", utils.DateToStr(time.Now()))
 					cancel()
 					return nil
 				}
 			} else {
-				fmt.Printf("nil data\n")
+				log.Infof("nil data\n")
 			}
 			return nil
 		},
@@ -174,7 +176,7 @@ func (d *DrityWord) Subscription(rPool *redis.Pool) error {
 		[]string{DRITYWORD_UP_SUBSCRIPTION_KEY}, []string{})
 
 	if nil != err {
-		fmt.Printf("\nDrity word subscription error: %v\n", err.Error())
+		log.Errorf("\nDrity word subscription error: %v\n", err.Error())
 		return err
 	}
 	return nil

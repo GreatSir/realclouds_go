@@ -9,9 +9,10 @@ import (
 
 	"crypto/tls"
 	"fmt"
-	"log"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -45,11 +46,11 @@ func NewKafka(brokerList []string) (kafka *Kafka, err error) {
 //Close *
 func (k *Kafka) Close() error {
 	if err := k.SyncProducerCollector.Close(); err != nil {
-		log.Println("Failed to shut down sync producer collector cleanly", err)
+		log.Errorf("Failed to shut down sync producer collector cleanly", err)
 	}
 
 	if err := k.AsyncProducerCollector.Close(); err != nil {
-		log.Println("Failed to shut down async producer collector cleanly", err)
+		log.Errorf("Failed to shut down async producer collector cleanly", err)
 	}
 	return nil
 }
@@ -111,7 +112,7 @@ func newSyncProducerCollector(brokerList []string) sarama.SyncProducer {
 
 	producer, err := sarama.NewSyncProducer(brokerList, config)
 	if err != nil {
-		log.Fatalln("Failed to start Sarama producer:", err)
+		log.Fatalf("Failed to start Sarama producer: %v", err)
 	}
 
 	return producer
@@ -133,12 +134,12 @@ func newASyncProducerCollector(brokerList []string) sarama.AsyncProducer {
 
 	producer, err := sarama.NewAsyncProducer(brokerList, config)
 	if err != nil {
-		log.Fatalln("Failed to start Sarama producer:", err)
+		log.Fatalf("Failed to start Sarama producer: %v", err)
 	}
 
 	go func() {
 		for err := range producer.Errors() {
-			log.Println("Failed to write access log entry:", err)
+			log.Errorf("Failed to write access log entry: %v", err)
 		}
 	}()
 
