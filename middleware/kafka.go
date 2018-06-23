@@ -53,7 +53,7 @@ type KafkaDuMessage struct {
 type KafkaMsg struct {
 	Receiver string         `json:"receiver" xml:"receiver"`
 	Message  KafkaDuMessage `json:"message" xml:"message"`
-	Data     interface{}    `json:"data" xml:"data"`
+	Data     interface{}    `json:"data,omitempty" xml:"data,omitempty"`
 	encoded  []byte         `json:"-" xml:"-"`
 	err      error          `json:"-" xml:"-"`
 }
