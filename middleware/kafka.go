@@ -120,10 +120,8 @@ func (k *Kafka) SyncSendMessage(topic string, msg KafkaMsg, key ...string) (part
 		Value: &msg,
 	}
 
-	if len(key) > 0 {
-		producerMessage.Key = sarama.StringEncoder(utils.StringUtils(key[0]).MD5())
-	} else {
-		producerMessage.Key = sarama.StringEncoder(utils.StringUtils(utils.GenerateUUID()).MD5())
+	if len(key) > 0 && len(key[0]) > 0 {
+		producerMessage.Key = sarama.StringEncoder(key[0])
 	}
 
 	partition, offset, err = k.SyncProducerCollector.SendMessage(producerMessage)
@@ -140,10 +138,8 @@ func (k *Kafka) ASyncSendMessage(topic string, msg KafkaMsg, key ...string) {
 		Value: &msg,
 	}
 
-	if len(key) > 0 {
-		producerMessage.Key = sarama.StringEncoder(utils.StringUtils(key[0]).MD5())
-	} else {
-		producerMessage.Key = sarama.StringEncoder(utils.StringUtils(utils.GenerateUUID()).MD5())
+	if len(key) > 0 && len(key[0]) > 0 {
+		producerMessage.Key = sarama.StringEncoder(key[0])
 	}
 
 	k.AsyncProducerCollector.Input() <- producerMessage
