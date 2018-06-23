@@ -24,10 +24,10 @@ var (
 
 //KafkaMsg *
 type KafkaMsg struct {
-	Receiver string
-	Data     interface{}
-	encoded  []byte
-	err      error
+	Receiver string      `json:"receiver" xml:"receiver"`
+	Data     interface{} `json:"data" xml:"data"`
+	encoded  []byte      `json:"-" xml:"-"`
+	err      error       `json:"-" xml:"-"`
 }
 
 func (k *KafkaMsg) ensureEncoded() {
