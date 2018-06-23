@@ -22,12 +22,40 @@ var (
 	DefaultKafkaVersion = sarama.V0_9_0_1
 )
 
+//KafkaDuMessage *
+type KafkaDuMessage struct {
+	Type int `json:"type" xml:"type" structs:"type" gorm:"column:type"` //1-公共消息  2-私有消息
+	//1-评论 2-回复 3-点赞 4-关注 5-播客 6-下架 7-审核 8-金币 9-爱心值 10-推荐 11-活动 12-音频 13-文本 14-专辑
+	Type2 int `json:"type_2" xml:"type_2" structs:"type_2" gorm:"column:type_2"`
+	//0-通用 1-音频 2-文本 3-专辑 4-评论
+	Type3 int `json:"type_3" xml:"type_3" structs:"type_3" gorm:"column:type_3"`
+	//1-收到 2-发送 3-新增 4-更新 5-收入 6-支出 7-线上 8-线下 9-升级 10-降级 11-通过 12-驳回 13-审核中 14-首页 15-横幅
+	Type4       int    `json:"type_4" xml:"type_4" structs:"type_4" gorm:"column:type_4"`
+	Type5       int    `json:"type_5" xml:"type_5" structs:"type_5" gorm:"column:type_5"` //预留类型
+	Type6       int    `json:"type_6" xml:"type_6" structs:"type_6" gorm:"column:type_6"` //预留类型
+	ResourceID  string `json:"resource_id,omitempty" xml:"resource_id,omitempty" structs:"resource_id" gorm:"column:resource_id"`
+	ResourceID2 string `json:"resource_id_2,omitempty" xml:"resource_id_2,omitempty" structs:"resource_id_2" gorm:"column:resource_id_2"`
+	ResourceID3 string `json:"resource_id_3,omitempty" xml:"resource_id_3,omitempty" structs:"resource_id_3" gorm:"column:resource_id_3"`
+	ResourceID4 string `json:"resource_id_4,omitempty" xml:"resource_id_4,omitempty" structs:"resource_id_4" gorm:"column:resource_id_4"`
+	ResourceID5 string `json:"resource_id_5,omitempty" xml:"resource_id_5,omitempty" structs:"resource_id_5" gorm:"column:resource_id_5"`
+	ResourceID6 string `json:"resource_id_6,omitempty" xml:"resource_id_6,omitempty" structs:"resource_id_6" gorm:"column:resource_id_6"`
+	Value       string `json:"value,omitempty" xml:"value,omitempty" structs:"value" gorm:"column:value"`
+	Value2      string `json:"value_2,omitempty" xml:"value_2,omitempty" structs:"value_2" gorm:"column:value_2"`
+	Value3      string `json:"value_3,omitempty" xml:"value_3,omitempty" structs:"value_3" gorm:"column:value_3"`
+	Value4      string `json:"value_4,omitempty" xml:"value_4,omitempty" structs:"value_4" gorm:"column:value_4"`
+	Value5      string `json:"value_5,omitempty" xml:"value_5,omitempty" structs:"value_5" gorm:"column:value_5"`
+	Value6      string `json:"value_6,omitempty" xml:"value_6,omitempty" structs:"value_6" gorm:"column:value_6"`
+	Read        bool   `json:"read" xml:"read" structs:"read" gorm:"column:read"`
+	State       int    `json:"state" xml:"state" structs:"state" gorm:"column:state"`
+}
+
 //KafkaMsg *
 type KafkaMsg struct {
-	Receiver string      `json:"receiver" xml:"receiver"`
-	Data     interface{} `json:"data" xml:"data"`
-	encoded  []byte      `json:"-" xml:"-"`
-	err      error       `json:"-" xml:"-"`
+	Receiver string         `json:"receiver" xml:"receiver"`
+	Message  KafkaDuMessage `json:"message" xml:"message"`
+	Data     interface{}    `json:"data" xml:"data"`
+	encoded  []byte         `json:"-" xml:"-"`
+	err      error          `json:"-" xml:"-"`
 }
 
 func (k *KafkaMsg) ensureEncoded() {
