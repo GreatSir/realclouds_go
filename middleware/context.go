@@ -136,9 +136,9 @@ func (c *Context) SMS() *SMS {
 	return c.Get("sms").(*SMS)
 }
 
-//Kafaka 获取 Kafaka
-func (c *Context) Kafaka() *Kafka {
-	return c.Get("kafaka").(*Kafka)
+//Kafka 获取 Kafka
+func (c *Context) Kafka() *Kafka {
+	return c.Get("kafka").(*Kafka)
 }
 
 //DrityWord 获取 Drity word

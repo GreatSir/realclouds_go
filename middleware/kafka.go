@@ -125,7 +125,7 @@ func newSyncProducerCollector(brokerList []string) sarama.SyncProducer {
 
 	config := sarama.NewConfig()
 
-	tlsConfig := getKafakaTLSConfigByEnv()
+	tlsConfig := getKafkaTLSConfigByEnv()
 	if tlsConfig != nil {
 		config.Net.TLS.Enable = true
 		config.Net.TLS.Config = tlsConfig
@@ -147,7 +147,7 @@ func newSyncProducerCollector(brokerList []string) sarama.SyncProducer {
 func newASyncProducerCollector(brokerList []string) sarama.AsyncProducer {
 	config := sarama.NewConfig()
 
-	tlsConfig := getKafakaTLSConfigByEnv()
+	tlsConfig := getKafkaTLSConfigByEnv()
 	if tlsConfig != nil {
 		config.Net.TLS.Enable = true
 		config.Net.TLS.Config = tlsConfig
@@ -172,7 +172,7 @@ func newASyncProducerCollector(brokerList []string) sarama.AsyncProducer {
 	return producer
 }
 
-func getKafakaTLSConfigByEnv() (t *tls.Config) {
+func getKafkaTLSConfigByEnv() (t *tls.Config) {
 	certFile := utils.GetENV("KAFKA_TLS_CERT")
 	keyFile := utils.GetENV("KAFKA_TLS_KEY")
 	caFile := utils.GetENV("KAFKA_TLS_CA")
@@ -183,10 +183,10 @@ func getKafakaTLSConfigByEnv() (t *tls.Config) {
 	return
 }
 
-//MwKafaka Kafa middleware
-func (k *Kafka) MwKafaka(next echo.HandlerFunc) echo.HandlerFunc {
+//MwKafka Kafa middleware
+func (k *Kafka) MwKafka(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		c.Set("kafaka", k)
+		c.Set("kafka", k)
 		return next(c)
 	}
 }
