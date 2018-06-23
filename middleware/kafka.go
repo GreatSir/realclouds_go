@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"encoding/json"
+
 	"github.com/Shopify/sarama"
 	cluster "github.com/bsm/sarama-cluster"
 
@@ -19,6 +21,32 @@ var (
 	//DefaultKafkaVersion *
 	DefaultKafkaVersion = sarama.V0_9_0_1
 )
+
+//KafkaMsg *
+type KafkaMsg struct {
+	Receiver string
+	Data     interface{}
+	encoded  []byte
+	err      error
+}
+
+func (k *KafkaMsg) ensureEncoded() {
+	if k.encoded == nil && k.err == nil {
+		k.encoded, k.err = json.Marshal(k)
+	}
+}
+
+//Length *
+func (k *KafkaMsg) Length() int {
+	k.ensureEncoded()
+	return len(k.encoded)
+}
+
+//Encode *
+func (k *KafkaMsg) Encode() ([]byte, error) {
+	k.ensureEncoded()
+	return k.encoded, k.err
+}
 
 //Kafka *
 type Kafka struct {
@@ -56,19 +84,18 @@ func (k *Kafka) Close() error {
 }
 
 //SyncSendMessage *
-func (k *Kafka) SyncSendMessage(topic, msg string, key ...string) (partition int32, offset int64, err error) {
+func (k *Kafka) SyncSendMessage(topic string, msg KafkaMsg, key ...string) (partition int32, offset int64, err error) {
 	topic = strings.TrimSpace(topic)
-	msg = strings.TrimSpace(msg)
 
 	producerMessage := &sarama.ProducerMessage{
 		Topic: topic,
-		Value: sarama.StringEncoder(msg),
+		Value: &msg,
 	}
 
 	if len(key) > 0 {
 		producerMessage.Key = sarama.StringEncoder(utils.StringUtils(key[0]).MD5())
 	} else {
-		producerMessage.Key = sarama.StringEncoder(utils.StringUtils(msg).MD5())
+		producerMessage.Key = sarama.StringEncoder(utils.StringUtils(utils.GenerateUUID()).MD5())
 	}
 
 	partition, offset, err = k.SyncProducerCollector.SendMessage(producerMessage)
@@ -77,19 +104,18 @@ func (k *Kafka) SyncSendMessage(topic, msg string, key ...string) (partition int
 }
 
 //ASyncSendMessage *
-func (k *Kafka) ASyncSendMessage(topic, msg string, key ...string) {
+func (k *Kafka) ASyncSendMessage(topic string, msg KafkaMsg, key ...string) {
 	topic = strings.TrimSpace(topic)
-	msg = strings.TrimSpace(msg)
 
 	producerMessage := &sarama.ProducerMessage{
 		Topic: topic,
-		Value: sarama.StringEncoder(msg),
+		Value: &msg,
 	}
 
 	if len(key) > 0 {
 		producerMessage.Key = sarama.StringEncoder(utils.StringUtils(key[0]).MD5())
 	} else {
-		producerMessage.Key = sarama.StringEncoder(utils.StringUtils(msg).MD5())
+		producerMessage.Key = sarama.StringEncoder(utils.StringUtils(utils.GenerateUUID()).MD5())
 	}
 
 	k.AsyncProducerCollector.Input() <- producerMessage
