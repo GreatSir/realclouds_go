@@ -51,7 +51,7 @@ type KafkaDuMessage struct {
 
 //KafkaMsg *
 type KafkaMsg struct {
-	Receiver string         `json:"receiver" xml:"receiver"`
+	Receiver []string       `json:"receiver" xml:"receiver"`
 	Message  KafkaDuMessage `json:"message" xml:"message"`
 	Data     interface{}    `json:"data,omitempty" xml:"data,omitempty"`
 	encoded  []byte         `json:"-" xml:"-"`
