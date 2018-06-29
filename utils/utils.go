@@ -20,6 +20,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"math"
 	mrand "math/rand"
 	"net/url"
 	"os"
@@ -861,6 +862,29 @@ func GetFileSizeToUnit(fileSize int64) string {
 		fs = ToStr(f) + " KB"
 	}
 	return fs
+}
+
+//StringArrayGroup 字符串数组分组
+func StringArrayGroup(array []string, step int) map[int][]string {
+	arrL, stepF := float64(len(array)), float64(step)
+
+	rLen := math.Ceil(arrL / stepF)
+
+	data := make(map[int][]string)
+
+	for i := 0; i < int(rLen); i++ {
+		if i == 0 {
+			data[i] = array[0:step]
+		} else {
+			if int(rLen)-1 == i {
+				data[i] = array[i*step : len(array)]
+			} else {
+				data[i] = array[i*step : (i+1)*step]
+			}
+		}
+	}
+
+	return data
 }
 
 //WalkPaths *
