@@ -874,7 +874,11 @@ func StringArrayGroup(array []string, step int) map[int][]string {
 
 	for i := 0; i < int(rLen); i++ {
 		if i == 0 {
-			data[i] = array[0:step]
+			if len(array) <= step {
+				data[i] = array[0:len(array)]
+			} else {
+				data[i] = array[0:step]
+			}
 		} else {
 			if int(rLen)-1 == i {
 				data[i] = array[i*step : len(array)]
