@@ -91,7 +91,7 @@ func (d *DrityWord) WriteDrityWord() error {
 
 	for _, v := range *d.DrityWordMap {
 		if len(v) > 0 {
-			str := fmt.Sprintf("%s %d\n", v, 100000)
+			str := fmt.Sprintf("%s %d n\n", v, 100000)
 			_, err := f.WriteString(str)
 			if nil != err {
 				return err
