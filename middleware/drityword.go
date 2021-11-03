@@ -11,7 +11,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/garyburd/redigo/redis"
+	"github.com/gomodule/redigo/redis"
 	"github.com/go-ego/gse"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
