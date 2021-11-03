@@ -11,7 +11,7 @@ import (
 	session "github.com/ipfans/echo-session"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
-	"github.com/shibingli/realclouds_go/utils"
+	"github.com/Greatsir/realclouds_go/utils"
 )
 
 const DRITYWORD_UP_SUBSCRIPTION_KEY = "drityword_up"
