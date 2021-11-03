@@ -7,7 +7,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql" //Gorm 支持
 	"github.com/labstack/echo"
-	"github.com/Greatsir/realclouds_go/utils"
+	"github.com/GreatSir/realclouds_go/utils"
 )
 
 //DefaultMySQL MySQL config

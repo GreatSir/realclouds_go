@@ -10,7 +10,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/Greatsir/realclouds_go/utils"
+	"github.com/GreatSir/realclouds_go/utils"
 
 	"github.com/labstack/echo"
 )
